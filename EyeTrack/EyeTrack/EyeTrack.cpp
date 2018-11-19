@@ -16,8 +16,9 @@ typedef struct _rect
 	int y;
 }RECT;
 
+#define TYPENUM 10
 vector<Mat> m_ImgMap;
-vector<RECT> m_postion;
+vector<Mat> m_TypeMap[TYPENUM];
 int main()
 {
 #if 1
@@ -27,41 +28,61 @@ int main()
 	if (!cap.isOpened())//如果视频不能正常打开则返回
 		return -1;
 
-	Mat frame;
 	int imgIndex = 0;
 	while (1)
 	{
+		uchar *ptrMap = nullptr, *ptrIO = nullptr;
+		Mat frame, imgGray;
 		cap >> frame;//等价于cap.read(frame);
 		if (frame.empty())//如果某帧为空则退出循环
 			break;
-
-		static int imgIndex = 0;
-		if (imgIndex == 0)
+		cvtColor(frame, imgGray, COLOR_BGR2GRAY);
+		resize(imgGray, imgGray, Size(600, 400));
+		static int imgIndex = 1;
+		if (imgIndex == 1)
 		{
-			m_ImgMap.push_back(frame);
+			m_ImgMap.push_back(imgGray);
+			m_TypeMap[0].push_back(imgGray);
 		}
 		else
 		{
-			for (int typeNum = 0; typeNum < m_ImgMap.size(); ++typeNum)
+			for (int typeNum = 0; typeNum < TYPENUM; ++typeNum)
 			{
-				for (int cy = 0; cy < m_ImgMap[typeNum].rows; cy += 2)
+				int minUnMatchNum = 24000000;
+				for (int index = 0; index < m_TypeMap[typeNum].size(); ++index)
 				{
-					for (int cx = 0; cx < m_ImgMap[typeNum].cols; cx += 2)
+					int unMatchNum = 0;
+					//vector<RECT> m_postion;
+					for (int cy = 0; cy < m_TypeMap[typeNum][index].rows; ++cy)
 					{
-						if (m_ImgMap[typeNum].data[3 * cy + cx] != frame.data[3 * cy + cx])
+						ptrMap = m_TypeMap[typeNum][index].ptr<uchar>(cy);
+						ptrIO = imgGray.ptr<uchar>(cy);
+						for (int cx = 0; cx < m_TypeMap[typeNum][index].cols; ++cx)
 						{
-							RECT rcRegion;
-							rcRegion.x = cx;
-							rcRegion.y = cy;
-							m_postion.push_back(rcRegion);
+							if (ptrMap[cx] != ptrIO[cx])
+							{
+								//RECT rcRegion;
+								//rcRegion.x = cx;
+								//rcRegion.y = cy;
+								//m_postion.push_back(rcRegion);
+								unMatchNum += 1;
+							}
 						}
 					}
+					minUnMatchNum = min(minUnMatchNum, unMatchNum);
+				}
+				if (minUnMatchNum > 10000 && minUnMatchNum != 24000000)
+				{
+					vconcat(m_ImgMap[typeNum], imgGray, m_ImgMap[typeNum]);
+					imwrite("D:/GitHub/EyeTrack/data/0000.jpg", m_ImgMap);
+					m_TypeMap[0].push_back(imgGray);
+					break;
 				}
 			}
 		}
 		string imIdex = format("D:/GitHub/EyeTrack/data/%d.jpg", imgIndex);
-		imwrite(imIdex.c_str(), frame);
-		//imshow("video", frame);
+		//imwrite(imIdex.c_str(), imgGray);
+		//imshow("video", imgGray);
 		imgIndex += 1;
 		//waitKey(20);//每帧延时20毫秒
 	}

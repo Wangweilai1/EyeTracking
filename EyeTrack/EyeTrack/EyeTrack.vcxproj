@@ -76,8 +76,8 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>../../Debug64/</OutDir>
     <IntDir>../../Debug64/Obj</IntDir>
-    <IncludePath>D:\OpenCV\Package\OpenCV4.0.0\include;D:\OpenCV\Package\OpenCV4.0.0\include\opencv2;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>D:\OpenCV\Package\OpenCV4.0.0\x64\vc14\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <IncludePath>../../OpenCV4.0.0/include;../../OpenCV4.0.0/include/opencv2;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>../../OpenCV4.0.0/x64/vc14/lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -86,8 +86,8 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>../../Release64/</OutDir>
     <IntDir>../../Release64/Obj</IntDir>
-    <IncludePath>D:\OpenCV\Package\OpenCV4.0.0\include;D:\OpenCV\Package\OpenCV4.0.0\include\opencv2;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>D:\OpenCV\Package\OpenCV4.0.0\x64\vc14\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <IncludePath>../../OpenCV4.0.0/include;../../OpenCV4.0.0/include/opencv2;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>../../OpenCV4.0.0/x64/vc14/lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
