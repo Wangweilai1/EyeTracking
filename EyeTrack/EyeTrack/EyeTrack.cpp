@@ -6,6 +6,7 @@
 #include <opencv2/highgui.hpp>
 #include "opencv2/stitching.hpp"
 #include <iostream>
+#include <omp.h>
 
 using namespace std;
 using namespace cv;
@@ -28,7 +29,7 @@ int main()
 	if (!cap.isOpened())//如果视频不能正常打开则返回
 		return -1;
 
-	int imgIndex = 0;
+	int imgIndex = 1;
 	while (1)
 	{
 		uchar *ptrMap = nullptr, *ptrIO = nullptr;
@@ -38,7 +39,6 @@ int main()
 			break;
 		cvtColor(frame, imgGray, COLOR_BGR2GRAY);
 		resize(imgGray, imgGray, Size(600, 400));
-		static int imgIndex = 1;
 		if (imgIndex == 1)
 		{
 			m_ImgMap.push_back(imgGray);
@@ -46,9 +46,11 @@ int main()
 		}
 		else
 		{
+#pragma omp parallel for
 			for (int typeNum = 0; typeNum < TYPENUM; ++typeNum)
 			{
 				int minUnMatchNum = 24000000;
+
 				for (int index = 0; index < m_TypeMap[typeNum].size(); ++index)
 				{
 					int unMatchNum = 0;
@@ -71,21 +73,21 @@ int main()
 					}
 					minUnMatchNum = min(minUnMatchNum, unMatchNum);
 				}
-				if (minUnMatchNum > 10000 && minUnMatchNum != 24000000)
+				if (minUnMatchNum > 100000 && minUnMatchNum != 24000000)
 				{
 					vconcat(m_ImgMap[typeNum], imgGray, m_ImgMap[typeNum]);
-					imwrite("D:/GitHub/EyeTrack/data/0000.jpg", m_ImgMap);
 					m_TypeMap[0].push_back(imgGray);
 					break;
 				}
 			}
 		}
-		string imIdex = format("D:/GitHub/EyeTrack/data/%d.jpg", imgIndex);
+		//string imIdex = format("D:/GitHub/EyeTrack/data/%d.jpg", imgIndex);
 		//imwrite(imIdex.c_str(), imgGray);
 		//imshow("video", imgGray);
 		imgIndex += 1;
 		//waitKey(20);//每帧延时20毫秒
 	}
+	imwrite("D:/GitHub/EyeTrack/data/0000.jpg", m_ImgMap);
 	cap.release();//释放资源
 #endif
 #if 0
