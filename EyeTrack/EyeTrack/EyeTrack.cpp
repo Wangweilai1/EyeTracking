@@ -2,43 +2,35 @@
 //
 
 #include "stdafx.h"
-#include <opencv2/opencv.hpp>
-#include <opencv2/highgui.hpp>
-#include "opencv2/stitching.hpp"
-#include <iostream>
-#include <omp.h>
+#include "EyeTrack.h"
 
-using namespace std;
-using namespace cv;
-
-typedef struct _rect
-{
-	int x;
-	int y;
-}RECT;
-
-#define TYPENUM 10
-vector<Mat> m_ImgMap;
-vector<Mat> m_TypeMap[TYPENUM];
 int main()
 {
 #if 1
+	unsigned long AAtime = 0, BBtime = 0; //check processing time
+	AAtime = cv::getTickCount(); //check processing time
+
 	VideoCapture cap;
-	cap.open("D:/GitHub/EyeTrack/data/lvxiaobo02.wmv"); //打开视频,以上两句等价于VideoCapture cap("E://2.avi");
+	cap.open("D:/GitHub/EyeTrack/data/Test1.wmv"); //打开视频,以上两句等价于VideoCapture cap("E://2.avi");
 
 	if (!cap.isOpened())//如果视频不能正常打开则返回
 		return -1;
 
 	int imgIndex = 1;
+
 	while (1)
 	{
 		uchar *ptrMap = nullptr, *ptrIO = nullptr;
 		Mat frame, imgGray;
-		cap >> frame;//等价于cap.read(frame);
-		if (frame.empty())//如果某帧为空则退出循环
+		cap >> frame;  //等价于cap.read(frame);
+		if (frame.empty()) //如果某帧为空则退出循环
 			break;
+#ifdef ROI
+		frame = frame(Range(START_Y, END_Y), Range(START_X, END_X));
+#endif
 		cvtColor(frame, imgGray, COLOR_BGR2GRAY);
-		resize(imgGray, imgGray, Size(600, 400));
+
+		//resize(imgTempGray, imgTempGray, Size(600, 400));
 		if (imgIndex == 1)
 		{
 			m_ImgMap.push_back(imgGray);
@@ -81,6 +73,7 @@ int main()
 				}
 			}
 		}
+
 		//string imIdex = format("D:/GitHub/EyeTrack/data/%d.jpg", imgIndex);
 		//imwrite(imIdex.c_str(), imgGray);
 		//imshow("video", imgGray);
@@ -89,6 +82,9 @@ int main()
 	}
 	imwrite("D:/GitHub/EyeTrack/data/0000.jpg", m_ImgMap);
 	cap.release();//释放资源
+
+	BBtime = cv::getTickCount(); //check processing time 
+	printf("Time consuming: %.2lf sec \n", (BBtime - AAtime) / cv::getTickFrequency()); //check processing time
 #endif
 #if 0
 	std::vector< cv::Mat > vImg;

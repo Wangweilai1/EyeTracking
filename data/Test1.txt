@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<WMBasicEdit >
+<Attributes >
+<WMENC_STRING Name="Author" Value="SR-Research Team" />
+<WMENC_STRING Name="Description" Value="Eyelink Screen Capture" />
+</Attributes>
+<Markers >
+<Marker Name="Trial 1" Time="20850000" />
+</Markers >
+</WMBasicEdit>
